@@ -18,7 +18,7 @@ class PositionalEncoding(nn.Module):
         self.encoding = encoding.unsqueeze(0) 
         self.register_buffer('positional_encoding', encoding)
     
-    def forward(self, x: torch.Tensor):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = x + (self.encoding[:, :x.shape[1], :]).requires_grad_(False)
         return self.dropout(x)
     

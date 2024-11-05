@@ -1,6 +1,6 @@
 from pathlib import Path
 
-def get_config():
+def get_config() -> dict:
     return {
         'batch_size': 8,
         'num_epochs': 20,
@@ -18,7 +18,7 @@ def get_config():
         'experiment_name': 'runs/tmodel'
     }
 
-def get_weights_file_path(config, epoch: str):
+def get_weights_file_path(config: dict, epoch: str) -> str:
     model_folder = config['model_folder']
     model_basename = config['model_basename']
     model_filename = f'{model_basename}{epoch}.pt'

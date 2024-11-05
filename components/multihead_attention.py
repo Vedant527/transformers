@@ -9,7 +9,7 @@ class MultiheadAttention(nn.Module):
         self.num_heads = num_heads
         assert d_model % num_heads == 0, 'Invalid number of heads, does not evenly split model dim'
 
-        self.d_k = d_model / num_heads
+        self.d_k = int(d_model / num_heads)
         self.w_q = nn.Linear(d_model, d_model)
         self.w_k = nn.Linear(d_model, d_model)
         self.w_v = nn.Linear(d_model, d_model)
@@ -17,7 +17,7 @@ class MultiheadAttention(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
     @staticmethod
-    def attention(query: torch.Tensor, key: torch.Tensor, value: torch.Tensor, mask: torch.Tensor, dropout: nn.Dropout):
+    def attention(query: torch.Tensor, key: torch.Tensor, value: torch.Tensor, mask: torch.Tensor, dropout: nn.Dropout) -> tuple[torch.Tensor, torch.Tensor]:
         d_k = query.shape[-1]
         attention_scores = (query @ key.transpose(-2, -1)) / math.sqrt(d_k)
         if mask is not None:
@@ -28,7 +28,7 @@ class MultiheadAttention(nn.Module):
         return (attention_scores @ value), attention_scores
 
 
-    def forward(self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, mask: torch.Tensor):
+    def forward(self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
         query = self.w_q(q) 
         key = self.w_k(k)
         value = self.w_v(v)

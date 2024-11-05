@@ -26,6 +26,7 @@ def get_or_build_tokenizer(config, ds, lang):
         tokenizer.save(str(tokenizer_path))
     else:
         tokenizer = Tokenizer.from_file(str(tokenizer_path))
+    return tokenizer
     
 def get_ds(config):
     ds_raw = load_dataset(f"{config['dataset_src']}", f"{config['lang_src']}-{config['lang_tgt']}", split='train')

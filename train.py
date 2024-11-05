@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
 from tqdm.auto import tqdm
+import warnings
 
 from dataloader import get_ds
 from transformer import Transformer
@@ -30,10 +31,10 @@ def train(config):
         optimizer.load_state_dict(state['optimizer_state_dict'])
         global_step = state['global_step']
 
-    loss_fn = nn.CrossEntropyLoss(ignore_index=tokenizer_src.token_to_id('[PAD]', label_smoothing=0.1)).to(device)
+    loss_fn = nn.CrossEntropyLoss(ignore_index=tokenizer_src.token_to_id('[PAD]'), label_smoothing=0.1).to(device)
     for epoch in range(initial_epoch, config['num_epochs']):
         model.train()
-        batch_iterator = tqdm(train_dataloader, desc='Processing epoch {epoch:02d}')
+        batch_iterator = tqdm(train_dataloader, desc=f'Processing epoch {epoch:02d}')
         for batch in batch_iterator:
             encoder_input = batch['encoder_input'].to(device)
             decoder_input = batch['decoder_input'].to(device)
@@ -41,11 +42,11 @@ def train(config):
             decoder_mask = batch['decoder_mask'].to(device)
 
             encoder_output = model.encode(encoder_input, encoder_mask)
-            decoder_output = model.encode(encoder_output, encoder_mask, decoder_input, decoder_mask)
+            decoder_output = model.decode(encoder_output, encoder_mask, decoder_input, decoder_mask)
             proj_output = model.project(decoder_output)
 
             label = batch['label'].to(device)
-            loss = loss_fn(proj_output.view(-1, tokenizer_tgt.get_vocab_size()))
+            loss = loss_fn(proj_output.view(-1, tokenizer_tgt.get_vocab_size()), label.view(-1))
             batch_iterator.set_postfix({f'loss': f'{loss.item():6.3f}'})
             writer.add_scalar('train loss', loss.item(), global_step)
             writer.flush()
@@ -64,6 +65,7 @@ def train(config):
         }, model_filename)
 
 if __name__ == '__main__':
+    warnings.filterwarnings("ignore")
     train(get_config())
 
 

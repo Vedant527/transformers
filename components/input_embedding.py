@@ -9,5 +9,5 @@ class InputEmbeddings(nn.Module):
         self.vocab_size = vocab_size
         self.embedding = nn.Embedding(vocab_size, d_model)
 
-    def forward(self, x: torch.Tensor):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.embedding(x) * math.sqrt(self.d_model)
