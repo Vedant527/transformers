@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from torch import Tensor
 import math
 
 class PositionalEncoding(nn.Module):
@@ -18,7 +19,7 @@ class PositionalEncoding(nn.Module):
         self.encoding = encoding.unsqueeze(0) 
         self.register_buffer('positional_encoding', encoding)
     
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: Tensor) -> Tensor:
         positional_encoding = self.encoding[:, :x.shape[1], :].to(x.device)
         x = x + positional_encoding.requires_grad_(False)
         return self.dropout(x)

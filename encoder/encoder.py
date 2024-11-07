@@ -1,5 +1,5 @@
-import torch
 import torch.nn as nn
+from torch import Tensor
 
 from components.feed_fwd import FeedForward
 from components.layer_normalization import LayerNormalization
@@ -14,7 +14,7 @@ class EncoderBlock(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.residual_connections = nn.ModuleList(ResidualConnection(dropout) for _ in range(2))
     
-    def forward(self, x: torch.Tensor, src_mask: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: Tensor, src_mask: Tensor) -> Tensor:
         x = self.residual_connections[0](x, lambda x: self.self_attention_block(x, x, x, src_mask))
         return self.residual_connections[1](x, self.feed_forward_block)
 
@@ -24,7 +24,7 @@ class Encoder(nn.Module):
         self.layers = layers
         self.norm = LayerNormalization()
 
-    def forward(self, x: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: Tensor, mask: Tensor) -> Tensor:
         for layer in self.layers:
             x = layer(x, mask)
         return self.norm(x)

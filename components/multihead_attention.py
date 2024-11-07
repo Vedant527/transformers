@@ -1,5 +1,5 @@
-import torch
 import torch.nn as nn
+from torch import Tensor
 import math
 
 class MultiheadAttention(nn.Module):
@@ -17,7 +17,7 @@ class MultiheadAttention(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
     @staticmethod
-    def attention(query: torch.Tensor, key: torch.Tensor, value: torch.Tensor, mask: torch.Tensor, dropout: nn.Dropout) -> tuple[torch.Tensor, torch.Tensor]:
+    def attention(query: Tensor, key: Tensor, value: Tensor, mask: Tensor, dropout: nn.Dropout) -> tuple[Tensor, Tensor]:
         d_k = query.shape[-1]
         attention_scores = (query @ key.transpose(-2, -1)) / math.sqrt(d_k)
         if mask is not None:
@@ -28,7 +28,7 @@ class MultiheadAttention(nn.Module):
         return (attention_scores @ value), attention_scores
 
 
-    def forward(self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+    def forward(self, q: Tensor, k: Tensor, v: Tensor, mask: Tensor) -> Tensor:
         query = self.w_q(q) 
         key = self.w_k(k)
         value = self.w_v(v)

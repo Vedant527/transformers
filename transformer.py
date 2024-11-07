@@ -1,5 +1,5 @@
-import torch
 import torch.nn as nn
+from torch import Tensor
 
 from components.feed_fwd import FeedForward
 from components.input_embedding import InputEmbeddings
@@ -26,17 +26,17 @@ class Transformer(nn.Module):
         self.tgt_pos = tgt_pos
         self.projection_layer = projection_layer
 
-    def encode(self, src: torch.Tensor, src_mask: torch.Tensor) -> torch.Tensor:
+    def encode(self, src: Tensor, src_mask: Tensor) -> Tensor:
         src = self.src_embed(src)
         src = self.src_pos(src)
         return self.encoder(src, src_mask)
     
-    def decode(self, encoder_output: torch.Tensor, src_mask: torch.Tensor, tgt: torch.Tensor, tgt_mask: torch.Tensor) -> torch.Tensor:
+    def decode(self, encoder_output: Tensor, src_mask: Tensor, tgt: Tensor, tgt_mask: Tensor) -> Tensor:
         tgt = self.tgt_embed(tgt)
         tgt = self.tgt_pos(tgt)
         return self.decoder(tgt, encoder_output, src_mask, tgt_mask)
     
-    def project(self, x: torch.Tensor) -> torch.Tensor:
+    def project(self, x: Tensor) -> Tensor:
         return self.projection_layer(x)
     
     @staticmethod
